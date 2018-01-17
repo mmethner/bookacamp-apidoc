@@ -2,6 +2,7 @@
 /**
  * This file is part of the php-apidoc package.
  */
+
 namespace Crada\Apidoc\View;
 
 use Crada\Apidoc\Exception;
@@ -43,7 +44,9 @@ class BaseView implements ViewInterface
     /**
      * {@inheritdoc}
      */
-    public function __init() {}
+    public function __init()
+    {
+    }
 
     /**
      * Set configuration params from the config file.
@@ -58,7 +61,7 @@ class BaseView implements ViewInterface
     /**
      * Get config param(s)
      *
-     * @param  string               $s_key
+     * @param  string $s_key
      * @return string|array|boolean
      */
     public function getConfig($s_key = null)
@@ -84,17 +87,9 @@ class BaseView implements ViewInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getTemplate()
-    {
-        return $this->s_file;
-    }
-
-    /**
      * Set parameters to render
-     * @param string  $key
-     * @param mixed   $value     Value - can be string / array
+     * @param string $key
+     * @param mixed $value Value - can be string / array
      * @param boolean $b_skipKey If true, the value will be assign directly to $this->st_data
      */
     public function set($key, $value, $b_skipKey = false)
@@ -128,7 +123,7 @@ class BaseView implements ViewInterface
      */
     public function render()
     {
-        $file = str_replace('\\','/',$this->getTemplate()).'.php';
+        $file = str_replace('\\', '/', $this->getTemplate()) . '.php';
         if (!file_exists($file)) {
             throw new Exception('Template ' . $file . ' does not exist.');
         }
@@ -138,5 +133,13 @@ class BaseView implements ViewInterface
         $output = ob_get_contents();
         ob_end_clean();
         echo $output;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTemplate()
+    {
+        return $this->s_file;
     }
 }

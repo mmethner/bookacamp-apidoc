@@ -9,36 +9,76 @@
     <title>{{ title }}</title>
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
-        body      { padding-top: 70px; margin-bottom: 15px; }
-        .tab-pane { padding-top: 10px; }
-        .mt0      { margin-top: 0px; }
-        .footer   { font-size: 12px; color: #666; }
-        .label    { display: inline-block; min-width: 65px; padding: 0.3em 0.6em 0.3em; }
-        .string   { color: green; }
-        .number   { color: darkorange; }
-        .boolean  { color: blue; }
-        .null     { color: magenta; }
-        .key      { color: red; }
-        .popover  { max-width: 800px; max-height: 400px; overflow-y: auto;}
+        body {
+            padding-top: 70px;
+            margin-bottom: 15px;
+        }
+
+        .tab-pane {
+            padding-top: 10px;
+        }
+
+        .mt0 {
+            margin-top: 0px;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .label {
+            display: inline-block;
+            min-width: 65px;
+            padding: 0.3em 0.6em 0.3em;
+        }
+
+        .string {
+            color: green;
+        }
+
+        .number {
+            color: darkorange;
+        }
+
+        .boolean {
+            color: blue;
+        }
+
+        .null {
+            color: magenta;
+        }
+
+        .key {
+            color: red;
+        }
+
+        .popover {
+            max-width: 800px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">{{ title }}</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">{{ title }}</a>
         </div>
         <div class="navbar-collapse collapse">
             <form class="navbar-form navbar-right">
                 <div class="form-group">
-                    Api key: <a href="javascript:void(0);" class="tooltipP" data-toggle="tooltip" title="Api key header with api key (key) and api key value (value) "><span class="glyphicon glyphicon-info-sign"></span></a>
+                    Api key: <a href="javascript:void(0);" class="tooltipP" data-toggle="tooltip"
+                                title="Api key header with api key (key) and api key value (value) "><span
+                        class="glyphicon glyphicon-info-sign"></span></a>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control input-sm" placeholder="key" id="apikey_key">
@@ -47,7 +87,8 @@
                     <input type="text" class="form-control input-sm" placeholder="value" id="apikey_value">
                 </div>
                 <div class="form-group" style="margin-left: 10px;">
-                    Basic Auth: <a href="javascript:void(0);" class="tooltipP" data-toggle="tooltip" title="If needed"><span class="glyphicon glyphicon-info-sign"></span></a>
+                    Basic Auth: <a href="javascript:void(0);" class="tooltipP" data-toggle="tooltip"
+                                   title="If needed"><span class="glyphicon glyphicon-info-sign"></span></a>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control input-sm" placeholder="Username" id="basic_auth_username">
@@ -56,48 +97,49 @@
                     <input type="text" class="form-control input-sm" placeholder="Password" id="basic_auth_password">
                 </div>
                 <div class="form-group">
-                    <button type="button" class="btn btn-success btn-sm tooltipP" data-toggle="tooltip" title="Save API key and Basic Auth data in localstorage" id="save_auth_data">
+                    <button type="button" class="btn btn-success btn-sm tooltipP" data-toggle="tooltip"
+                            title="Save API key and Basic Auth data in localstorage" id="save_auth_data">
                         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                     </button>
                 </div>
             </form>
         </div><!--/.nav-collapse -->
-      </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Api URL</h5>
+            <input id="apiUrl" type="text" class="form-control input-sm" placeholder="https://api.mydomain.tld">
+        </div>
+    </div>
+    <hr>
+    <div class="panel-group" id="accordion">
+        {{ content }}
+    </div>
+    <hr>
+
+    <div class="row mt0 footer">
+        <div class="col-md-6" align="left">
+            Generated on {{ date }}
+        </div>
+        <div class="col-md-6" align="right">
+            <a href="https://github.com/mmethner/php-apidoc" target="_blank">php-apidoc v {{ version }}</a>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h5>Api URL</h5>
-                <input id="apiUrl" type="text" class="form-control input-sm" placeholder="https://api.mydomain.tld">
-            </div>
-        </div>
-        <hr>
-        <div class="panel-group" id="accordion">
-            {{ content }}
-        </div>
-        <hr>
+</div> <!-- /container -->
 
-        <div class="row mt0 footer">
-            <div class="col-md-6" align="left">
-                Generated on {{ date }}
-            </div>
-            <div class="col-md-6" align="right">
-                <a href="https://github.com/mmethner/php-apidoc" target="_blank">php-apidoc v {{ version }}</a>
-            </div>
-        </div>
-
-    </div> <!-- /container -->
-
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script type="text/javascript">
     function syntaxHighlight(json) {
         if (typeof json != 'string') {
             json = JSON.stringify(json, undefined, 2);
         }
         json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
             var cls = 'number';
             if (/^"/.test(match)) {
                 if (/:$/.test(match)) {
@@ -121,7 +163,8 @@
             return str;
         }
     }
-    var storage = (function() {
+
+    var storage = (function () {
         var uid = new Date;
         var storage;
         var result;
@@ -130,15 +173,15 @@
             result = storage.getItem(uid) == uid;
             storage.removeItem(uid);
             return result && storage;
-        } catch (exception) {}
+        } catch (exception) {
+        }
     }());
 
-    $.fn.serializeObject = function()
-    {
+    $.fn.serializeObject = function () {
         var o = {};
         var a = this.serializeArray();
-        $.each(a, function() {
-            if(!this.value) {
+        $.each(a, function () {
+            if (!this.value) {
                 return;
             }
             if (o[this.name] !== undefined) {
@@ -153,7 +196,7 @@
         return o;
     };
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         if (storage) {
             $('#basic_auth_username').val(storage.getItem('basicAuthUsername'));
@@ -162,7 +205,7 @@
             $('#apikey_value').val(storage.getItem('apiKeyValue'));
         }
 
-        $('#php-apidoctab a').click(function(e) {
+        $('#php-apidoctab a').click(function (e) {
             e.preventDefault()
             $(this).tab('show')
         });
@@ -173,7 +216,7 @@
 
         $('code[id^=response]').hide();
 
-        $.each($('pre[id^=sample_response],pre[id^=sample_post_body]'), function() {
+        $.each($('pre[id^=sample_response],pre[id^=sample_post_body]'), function () {
             if ($(this).html() == 'NA') {
                 return;
             }
@@ -181,9 +224,9 @@
             $(this).html(str);
         });
 
-        $("[data-toggle=popover]").popover({placement:'right'});
+        $("[data-toggle=popover]").popover({placement: 'right'});
 
-        $('[data-toggle=popover]').on('shown.bs.popover', function() {
+        $('[data-toggle=popover]').on('shown.bs.popover', function () {
             var $sample = $(this).parent().find(".popover-content"),
                 str = $(this).data('content');
             if (typeof str == "undefined" || str === "") {
@@ -193,7 +236,7 @@
             $sample.html('<pre>' + str + '</pre>');
         });
 
-        $('body').on('click', '#save_auth_data', function(e) {
+        $('body').on('click', '#save_auth_data', function (e) {
             if (storage) {
                 storage.setItem('basicAuthUsername', $('#basic_auth_username').val());
                 storage.setItem('basicAuthPassword', $('#basic_auth_password').val());
@@ -204,7 +247,7 @@
             }
         });
 
-        $('body').on('click', '.send', function(e) {
+        $('body').on('click', '.send', function (e) {
             e.preventDefault();
             var form = $(this).closest('form');
             //added /g to get all the matched params instead of only first
@@ -226,12 +269,12 @@
 
             var index, key, value;
 
-            if(matchedParamsInRoute) {
+            if (matchedParamsInRoute) {
                 for (index = 0; index < matchedParamsInRoute.length; ++index) {
                     try {
                         key = matchedParamsInRoute[index];
                         value = serializedData[key];
-                        if (typeof value == "undefined") value ="";
+                        if (typeof value == "undefined") value = "";
                         url = url.replace("{" + key + "}", value);
                         delete serializedData[key];
                     } catch (err) {
@@ -247,7 +290,7 @@
             var apiKey = $('#apikey_key').val();
             var apiKeyValue = $('#apikey_value').val();
 
-            if(apiKey.length > 0 && apiKeyValue.length > 0) {
+            if (apiKey.length > 0 && apiKeyValue.length > 0) {
                 st_headers[apiKey] = apiKeyValue;
             }
 
@@ -255,9 +298,9 @@
                 st_headers['Authorization'] = "Basic " + btoa(basicAuthUsername + ":" + basicAuthPassword);
             }
 
-            $("#sandbox" + theId + " .headers input[type=text]").each(function() {
+            $("#sandbox" + theId + " .headers input[type=text]").each(function () {
                 val = $(this).val();
-                if(val.length > 0) {
+                if (val.length > 0) {
                     st_headers[$(this).prop('name')] = val;
                 }
             });
@@ -270,7 +313,7 @@
                 contentType: false,
                 processData: false,
                 headers: st_headers,
-                success: function(data, textStatus, xhr) {
+                success: function (data, textStatus, xhr) {
                     if (typeof data === 'object') {
                         var str = JSON.stringify(data, null, 2);
                         $('#response' + theId).html(syntaxHighlight(str));
@@ -280,7 +323,7 @@
                     $('#response_headers' + theId).html('HTTP ' + xhr.status + ' ' + xhr.statusText + '<br/><br/>' + xhr.getAllResponseHeaders());
                     $('#response' + theId).show();
                 },
-                error: function(xhr, textStatus, error) {
+                error: function (xhr, textStatus, error) {
                     var str = JSON.stringify($.parseJSON(xhr.responseText), null, 2);
                     $('#response_headers' + theId).html('HTTP ' + xhr.status + ' ' + xhr.statusText + '<br/><br/>' + xhr.getAllResponseHeaders());
                     $('#response' + theId).html(syntaxHighlight(str));
@@ -291,6 +334,6 @@
             return false;
         });
     });
-    </script>
+</script>
 </body>
 </html>

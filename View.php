@@ -2,6 +2,7 @@
 /**
  * This file is part of the php-apidoc package.
  */
+
 namespace Crada\Apidoc;
 
 use Crada\Apidoc\View\Baseview;

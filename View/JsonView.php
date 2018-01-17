@@ -2,6 +2,7 @@
 /**
  * This file is part of the php-apidoc package.
  */
+
 namespace Crada\Apidoc\View;
 
 /**
@@ -15,7 +16,7 @@ class JsonView extends BaseView
      */
     public function render()
     {
-        $data     = json_encode($this->st_data, JSON_FORCE_OBJECT);
+        $data = json_encode($this->st_data, JSON_FORCE_OBJECT);
 
         $response = new \Crada\Apidoc\Response();
         $response->setContentType('application/json');

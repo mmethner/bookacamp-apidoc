@@ -2,6 +2,7 @@
 /**
  * This file is part of the php-apidoc package.
  */
+
 namespace Crada\Apidoc;
 
 /**
@@ -13,14 +14,14 @@ class Response
     /**
      * Set header
      *
-     * @param string  $key
-     * @param string  $value
+     * @param string $key
+     * @param string $value
      * @param integer $http_response_code Optional
      * @example $response->setHeader('Content-type','application/json')
      */
     public function setHeader($key, $value, $http_response_code = null)
     {
-        header($key.': '.$value, null, $http_response_code);
+        header($key . ': ' . $value, null, $http_response_code);
     }
 
     /**
@@ -31,7 +32,7 @@ class Response
      */
     public function setContentType($s_contentType)
     {
-        header('Content-type: '.$s_contentType);
+        header('Content-type: ' . $s_contentType);
     }
 
     /**

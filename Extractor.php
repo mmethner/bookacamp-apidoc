@@ -2,9 +2,8 @@
 /**
  * This file is part of the php-apidoc package.
  */
-namespace Crada\Apidoc;
 
-use Crada\Apidoc\Exception;
+namespace Crada\Apidoc;
 
 /**
  * Class imported from https://github.com/eriknyk/Annotations
@@ -20,45 +19,16 @@ class Extractor
      * @var array
      */
     private static $annotationCache;
-
-    /**
-     * Indicates that annotations should has strict behavior, 'false' by default
-     * @var boolean
-     */
-    private $strict = false;
-
     /**
      * Stores the default namespace for Objects instance, usually used on methods like getMethodAnnotationsObjects()
      * @var string
      */
     public $defaultNamespace = '';
-
     /**
-     * Sets strict variable to true/false
-     * @param bool $value boolean value to indicate that annotations to has strict behavior
+     * Indicates that annotations should has strict behavior, 'false' by default
+     * @var boolean
      */
-    public function setStrict($value)
-    {
-        $this->strict = (bool) $value;
-    }
-
-    /**
-     * Sets default namespace to use in object instantiation
-     * @param string $namespace default namespace
-     */
-    public function setDefaultNamespace($namespace)
-    {
-        $this->defaultNamespace = $namespace;
-    }
-
-    /**
-     * Gets default namespace used in object instantiation
-     * @return string $namespace default namespace
-     */
-    public function getDefaultAnnotationNamespace()
-    {
-        return $this->defaultNamespace;
-    }
+    private $strict = false;
 
     /**
      * Gets all anotations with pattern @SomeAnnotation() from a given class
@@ -75,121 +45,6 @@ class Extractor
 
         return self::$annotationCache[$className];
     }
-
-    public static function getAllClassAnnotations($className)
-    {
-        $class = new \ReflectionClass($className);
-
-        foreach ($class->getMethods() as $object) {
-            self::$annotationCache['annotations'][$className][$object->name] = self::getMethodAnnotations($className, $object->name);
-        }
-
-        return self::$annotationCache['annotations'];
-    }
-
-    /**
-     * Gets all anotations with pattern @SomeAnnotation() from a determinated method of a given class
-     *
-     * @param  string $className  class name
-     * @param  string $methodName method name to get annotations
-     * @return array  self::$annotationCache all annotated elements of a method given
-     */
-    public static function getMethodAnnotations($className, $methodName)
-    {
-        if (!isset(self::$annotationCache[$className . '::' . $methodName])) {
-            try {
-                $method = new \ReflectionMethod($className, $methodName);
-                $class = new \ReflectionClass($className);
-                $annotations = self::consolidateAnnotations($method->getDocComment(), $class->getDocComment());
-            } catch (\ReflectionException $e) {
-                $annotations = array();
-            }
-
-            self::$annotationCache[$className . '::' . $methodName] = $annotations;
-        }
-
-        return self::$annotationCache[$className . '::' . $methodName];
-    }
-
-    /**
-     * Gets all anotations with pattern @SomeAnnotation() from a determinated method of a given class
-     * and instance its abcAnnotation class
-     *
-     * @param  string $className  class name
-     * @param  string $methodName method name to get annotations
-     * @return array  self::$annotationCache all annotated objects of a method given
-     */
-    public function getMethodAnnotationsObjects($className, $methodName)
-    {
-        $annotations = $this->getMethodAnnotations($className, $methodName);
-        $objects     = array();
-
-        $i = 0;
-
-        foreach ($annotations as $annotationClass => $listParams) {
-            $annotationClass = ucfirst($annotationClass);
-            $class = $this->defaultNamespace . $annotationClass . 'Annotation';
-
-            // verify is the annotation class exists, depending if Annotations::strict is true
-            // if not, just skip the annotation instance creation.
-            if (! class_exists($class)) {
-                if ($this->strict) {
-                    throw new Exception(sprintf('Runtime Error: Annotation Class Not Found: %s', $class));
-                } else {
-                    // silent skip & continue
-                    continue;
-                }
-            }
-
-            if (empty($objects[$annotationClass])) {
-                $objects[$annotationClass] = new $class();
-            }
-
-            foreach ($listParams as $params) {
-                if (is_array($params)) {
-                    foreach ($params as $key => $value) {
-                        $objects[$annotationClass]->set($key, $value);
-                    }
-                } else {
-                    $objects[$annotationClass]->set($i++, $params);
-                }
-            }
-        }
-
-        return $objects;
-    }
-
-    private static function consolidateAnnotations ($docblockMethod, $dockblockClass)
-    {
-        $methodAnnotations = self::parseAnnotations($docblockMethod);
-        $classAnnotations  = self::parseAnnotations($dockblockClass);
-
-        if(count($methodAnnotations) === 0) {
-            return array();
-        }
-
-        foreach ($classAnnotations as $name => $valueClass) {
-            if (count($valueClass) !== 1) {
-                continue;
-            }
-
-            if ($name === 'ApiRoute') {
-                if (isset($methodAnnotations[$name])) {
-                    foreach ($methodAnnotations[$name] as $key => $valueMethod) {
-                        $methodAnnotations[$name][$key]['name'] = $valueClass[0]['name'] . $valueMethod['name'];
-                    }
-                }
-            }
-
-            if($name === 'ApiSector') {
-                $methodAnnotations[$name] = $valueClass;
-            }
-        }
-
-        return $methodAnnotations;
-    }
-
-
 
     /**
      * Parse annotations
@@ -211,8 +66,8 @@ class Extractor
                 // annotations has arguments
                 if (isset($matches['args'][$i])) {
                     $argsParts = trim($matches['args'][$i]);
-                    $name      = $matches['name'][$i];
-                    $value     = self::parseArgs($argsParts);
+                    $name = $matches['name'][$i];
+                    $value = self::parseArgs($argsParts);
                 } else {
                     $value = array();
                 }
@@ -235,24 +90,24 @@ class Extractor
         // Replace initial stars
         $content = preg_replace('/^\s*\*/m', '', $content);
 
-        $data  = array();
-        $len   = strlen($content);
-        $i     = 0;
-        $var   = '';
-        $val   = '';
+        $data = array();
+        $len = strlen($content);
+        $i = 0;
+        $var = '';
+        $val = '';
         $level = 1;
 
         $prevDelimiter = '';
         $nextDelimiter = '';
-        $nextToken     = '';
-        $composing     = false;
-        $type          = 'plain';
-        $delimiter     = null;
-        $quoted        = false;
-        $tokens        = array('"', '"', '{', '}', ',', '=');
+        $nextToken = '';
+        $composing = false;
+        $type = 'plain';
+        $delimiter = null;
+        $quoted = false;
+        $tokens = array('"', '"', '{', '}', ',', '=');
 
         while ($i <= $len) {
-            $prev_c = substr($content, $i -1, 1);
+            $prev_c = substr($content, $i - 1, 1);
             $c = substr($content, $i++, 1);
 
             if ($c === '"' && $prev_c !== "\\") {
@@ -260,9 +115,9 @@ class Extractor
                 //open delimiter
                 if (!$composing && empty($prevDelimiter) && empty($nextDelimiter)) {
                     $prevDelimiter = $nextDelimiter = $delimiter;
-                    $val           = '';
-                    $composing     = true;
-                    $quoted        = true;
+                    $val = '';
+                    $composing = true;
+                    $quoted = true;
                 } else {
                     // close delimiter
                     if ($c !== $nextDelimiter) {
@@ -277,22 +132,22 @@ class Extractor
                         if (',' !== substr($content, $i, 1) && '\\' !== $prev_c) {
                             throw new Exception(sprintf(
                                 "Parse Error: missing comma separator near: ...%s<--",
-                                substr($content, ($i-10), $i)
+                                substr($content, ($i - 10), $i)
                             ));
                         }
                     }
 
                     $prevDelimiter = $nextDelimiter = '';
-                    $composing     = false;
-                    $delimiter     = null;
+                    $composing = false;
+                    $delimiter = null;
                 }
             } elseif (!$composing && in_array($c, $tokens)) {
                 switch ($c) {
                     case '=':
                         $prevDelimiter = $nextDelimiter = '';
-                        $level     = 2;
+                        $level = 2;
                         $composing = false;
-                        $type      = 'assoc';
+                        $type = 'assoc';
                         $quoted = false;
                         break;
                     case ',':
@@ -356,7 +211,7 @@ class Extractor
                 }
 
                 $level = 1;
-                $var   = $val = '';
+                $var = $val = '';
                 $composing = false;
                 $quoted = false;
             }
@@ -368,7 +223,7 @@ class Extractor
     /**
      * Try determinate the original type variable of a string
      *
-     * @param  string  $val  string containing possibles variables that can be cast to bool or int
+     * @param  string $val string containing possibles variables that can be cast to bool or int
      * @param  boolean $trim indicate if the value passed should be trimmed after to try cast
      * @return mixed   returns the value converted to original type if was possible
      */
@@ -395,5 +250,146 @@ class Extractor
         }
 
         return $val;
+    }
+
+    public static function getAllClassAnnotations($className)
+    {
+        $class = new \ReflectionClass($className);
+
+        foreach ($class->getMethods() as $object) {
+            self::$annotationCache['annotations'][$className][$object->name] = self::getMethodAnnotations($className,
+                $object->name);
+        }
+
+        return self::$annotationCache['annotations'];
+    }
+
+    /**
+     * Gets all anotations with pattern @SomeAnnotation() from a determinated method of a given class
+     *
+     * @param  string $className class name
+     * @param  string $methodName method name to get annotations
+     * @return array  self::$annotationCache all annotated elements of a method given
+     */
+    public static function getMethodAnnotations($className, $methodName)
+    {
+        if (!isset(self::$annotationCache[$className . '::' . $methodName])) {
+            try {
+                $method = new \ReflectionMethod($className, $methodName);
+                $class = new \ReflectionClass($className);
+                $annotations = self::consolidateAnnotations($method->getDocComment(), $class->getDocComment());
+            } catch (\ReflectionException $e) {
+                $annotations = array();
+            }
+
+            self::$annotationCache[$className . '::' . $methodName] = $annotations;
+        }
+
+        return self::$annotationCache[$className . '::' . $methodName];
+    }
+
+    private static function consolidateAnnotations($docblockMethod, $dockblockClass)
+    {
+        $methodAnnotations = self::parseAnnotations($docblockMethod);
+        $classAnnotations = self::parseAnnotations($dockblockClass);
+
+        if (count($methodAnnotations) === 0) {
+            return array();
+        }
+
+        foreach ($classAnnotations as $name => $valueClass) {
+            if (count($valueClass) !== 1) {
+                continue;
+            }
+
+            if ($name === 'ApiRoute') {
+                if (isset($methodAnnotations[$name])) {
+                    foreach ($methodAnnotations[$name] as $key => $valueMethod) {
+                        $methodAnnotations[$name][$key]['name'] = $valueClass[0]['name'] . $valueMethod['name'];
+                    }
+                }
+            }
+
+            if ($name === 'ApiSector') {
+                $methodAnnotations[$name] = $valueClass;
+            }
+        }
+
+        return $methodAnnotations;
+    }
+
+    /**
+     * Sets strict variable to true/false
+     * @param bool $value boolean value to indicate that annotations to has strict behavior
+     */
+    public function setStrict($value)
+    {
+        $this->strict = (bool)$value;
+    }
+
+    /**
+     * Sets default namespace to use in object instantiation
+     * @param string $namespace default namespace
+     */
+    public function setDefaultNamespace($namespace)
+    {
+        $this->defaultNamespace = $namespace;
+    }
+
+    /**
+     * Gets default namespace used in object instantiation
+     * @return string $namespace default namespace
+     */
+    public function getDefaultAnnotationNamespace()
+    {
+        return $this->defaultNamespace;
+    }
+
+    /**
+     * Gets all anotations with pattern @SomeAnnotation() from a determinated method of a given class
+     * and instance its abcAnnotation class
+     *
+     * @param  string $className class name
+     * @param  string $methodName method name to get annotations
+     * @return array  self::$annotationCache all annotated objects of a method given
+     */
+    public function getMethodAnnotationsObjects($className, $methodName)
+    {
+        $annotations = $this->getMethodAnnotations($className, $methodName);
+        $objects = array();
+
+        $i = 0;
+
+        foreach ($annotations as $annotationClass => $listParams) {
+            $annotationClass = ucfirst($annotationClass);
+            $class = $this->defaultNamespace . $annotationClass . 'Annotation';
+
+            // verify is the annotation class exists, depending if Annotations::strict is true
+            // if not, just skip the annotation instance creation.
+            if (!class_exists($class)) {
+                if ($this->strict) {
+                    throw new Exception(sprintf('Runtime Error: Annotation Class Not Found: %s', $class));
+                } else {
+                    // silent skip & continue
+                    continue;
+                }
+            }
+
+            if (empty($objects[$annotationClass])) {
+                $objects[$annotationClass] = new $class();
+            }
+
+            foreach ($listParams as $params) {
+                if (is_array($params)) {
+                    foreach ($params as $key => $value) {
+                        $objects[$annotationClass]->set($key, $value);
+                    }
+                } else {
+                    $objects[$annotationClass]->set($i++, $params);
+                }
+            }
+        }
+
+        return $objects;
     }
 }

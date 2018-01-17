@@ -2,6 +2,7 @@
 /**
  * This file is part of the php-apidoc package.
  */
+
 namespace Crada\Apidoc\View;
 
 /**
@@ -31,7 +32,7 @@ interface ViewInterface
     /**
      * Set parameters to render
      * @param string $key
-     * @param mixed  $value Value - can be string / array
+     * @param mixed $value Value - can be string / array
      */
     public function set($key, $value);
 
