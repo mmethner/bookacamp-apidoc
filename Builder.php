@@ -115,7 +115,7 @@ class Builder
 </table>';
     static $paramContentTpl = '
 <tr>
-    <td>{{ name }}</td>
+    <td><strong>{{ name }}</strong></td>
     <td>{{ type }}</td>
     <td>{{ nullable }}</td>
     <td>{{ description }}</td>
@@ -430,14 +430,50 @@ class Builder
                 '{{ nullable }}' => @$params['nullable'] == '1' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
-            if (isset($params['sample'])) {
-                $tr['{{ type }}'] .= ' ' . strtr(static::$paramSampleBtnTpl,
-                        array('{{ sample }}' => $params['sample']));
-            }
+            //if (isset($params['sample'])) {
+            //    $tr['{{ type }}'] .= ' ' . strtr(
+            //            static::$paramSampleBtnTpl,
+            //            array('{{ sample }}' => $params['sample'])
+            //        );
+            //}
             $body[] = strtr(static::$paramContentTpl, $tr);
+
+            if (isset($params['sample'])) {
+                $this->appendParamsTemplateDescription($body, $params['sample']);
+            }
         }
 
         return strtr(static::$paramTableTpl, array('{{ tbody }}' => implode(PHP_EOL, $body)));
+    }
+
+    /**
+     * @param array $body
+     * @param string $sample
+     * @return void
+     */
+    private function appendParamsTemplateDescription(&$body, $sample = '')
+    {
+        $sample = str_replace("'", "\"", $sample);
+
+        $jsonObject = json_decode($sample, true);
+        if (is_null($jsonObject)) {
+            $body[] = strtr(static::$paramContentTpl, array(
+                '{{ name }}' => '',
+                '{{ type }}' => '',
+                '{{ nullable }}' => '',
+                '{{ description }}' => $sample,
+            ));
+            return;
+        }
+
+        foreach ($jsonObject as $row) {
+            $body[] = strtr(static::$paramContentTpl, array(
+                '{{ name }}' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.@$row['name'],
+                '{{ type }}' => @$row['type'],
+                '{{ nullable }}' => @$row['nullable'] == '1' ? 'No' : 'Yes',
+                '{{ description }}' => @$row['description'],
+            ));
+        }
     }
 
     /**
