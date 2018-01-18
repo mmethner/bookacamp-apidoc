@@ -18,6 +18,9 @@ class Builder
      */
     const VERSION = '2.0.0';
 
+    /**
+     * @var string
+     */
     public static $mainTpl = '
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -28,13 +31,11 @@ class Builder
     <div id="collapseOne{{ elt_id }}" class="panel-collapse collapse">
         <div class="panel-body">
 
-            <!-- Nav tabs -->
             <ul class="nav nav-tabs" id="php-apidoctab{{ elt_id }}">
                 <li class="active"><a href="#info{{ elt_id }}" data-toggle="tab">Info</a></li>
                 <li><a href="#sample{{ elt_id }}" data-toggle="tab">Sample output</a></li>
             </ul>
 
-            <!-- Tab panes -->
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info{{ elt_id }}">
@@ -59,7 +60,7 @@ class Builder
                         {{ body }}
                       </div>
                     </div>
-                </div><!-- #info -->
+                </div>
 
                 <div class="tab-pane" id="sample{{ elt_id }}">
                     <div class="row">
@@ -68,23 +69,35 @@ class Builder
                             {{ sample_response_body }}
                         </div>
                     </div>
-                </div><!-- #sample -->
+                </div>
 
-            </div><!-- .tab-content -->
+            </div>
         </div>
     </div>
 </div>';
 
+    /**
+     * @var string
+     */
     static $samplePostBodyTpl = '<pre id="sample_post_body{{ elt_id }}">{{ body }}</pre>';
 
+    /**
+     * @var string
+     */
     static $sampleReponseTpl = '
 {{ description }}
 <hr>
 <pre id="sample_response{{ elt_id }}">{{ response }}</pre>';
 
+    /**
+     * @var string
+     */
     static $sampleReponseHeaderTpl = '
 <pre id="sample_resp_header{{ elt_id }}">{{ response }}</pre>';
 
+    /**
+     * @var string
+     */
     static $paramTableTpl = '
 <table class="table table-hover">
     <thead>
@@ -100,6 +113,9 @@ class Builder
     </tbody>
 </table>';
 
+    /**
+     * @var string
+     */
     static $paramContentTpl = '
 <tr>
     <td><strong>{{ name }}</strong></td>
@@ -108,6 +124,20 @@ class Builder
     <td>{{ description }}</td>
 </tr>';
 
+    /**
+     * @var string
+     */
+    static $paramSubContentTpl = '
+<tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ name }}</td>
+    <td>{{ type }}</td>
+    <td>{{ required }}</td>
+    <td>{{ description }}</td>
+</tr>';
+
+    /**
+     * @var string
+     */
     static $paramSampleBtnTpl = '
 <a href="javascript:void(0);" data-toggle="popover" data-trigger="focus" data-placement="bottom" title="Sample" data-content="{{ sample }}">
     <i class="btn glyphicon glyphicon-exclamation-sign"></i>
@@ -358,7 +388,7 @@ class Builder
             $tr = array(
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
-                '{{ required }}' => @$params['required'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$params['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
             $body[] = strtr(static::$paramContentTpl, $tr);
@@ -385,7 +415,7 @@ class Builder
             $tr = array(
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
-                '{{ required }}' => @$params['required'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$params['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
             $body[] = strtr(static::$paramContentTpl, $tr);
@@ -409,7 +439,7 @@ class Builder
 
         $jsonObject = json_decode($sample, true);
         if (is_null($jsonObject)) {
-            $body[] = strtr(static::$paramContentTpl, array(
+            $body[] = strtr(static::$paramSubContentTpl, array(
                 '{{ name }}' => '',
                 '{{ type }}' => '',
                 '{{ required }}' => '',
@@ -419,10 +449,10 @@ class Builder
         }
 
         foreach ($jsonObject as $row) {
-            $body[] = strtr(static::$paramContentTpl, array(
-                '{{ name }}' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.@$row['name'],
+            $body[] = strtr(static::$paramSubContentTpl, array(
+                '{{ name }}' => @$row['name'],
                 '{{ type }}' => @$row['type'],
-                '{{ required }}' => @$row['required'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$row['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$row['description'],
             ));
         }
