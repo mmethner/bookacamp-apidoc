@@ -19,6 +19,7 @@ class Builder
      * @var string
      */
     const VERSION = '1.3.4';
+
     public static $mainTpl = '
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -32,7 +33,6 @@ class Builder
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" id="php-apidoctab{{ elt_id }}">
                 <li class="active"><a href="#info{{ elt_id }}" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox{{ elt_id }}" data-toggle="tab">Sandbox</a></li>
                 <li><a href="#sample{{ elt_id }}" data-toggle="tab">Sample output</a></li>
             </ul>
 
@@ -63,22 +63,6 @@ class Builder
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox{{ elt_id }}">
-                    <div class="row">
-                        <div class="col-md-12">
-                        {{ sandbox_form }}
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers{{ elt_id }}"></pre>
-                                <pre id="response{{ elt_id }}"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
                 <div class="tab-pane" id="sample{{ elt_id }}">
                     <div class="row">
                         <div class="col-md-12">
@@ -92,13 +76,17 @@ class Builder
         </div>
     </div>
 </div>';
+
     static $samplePostBodyTpl = '<pre id="sample_post_body{{ elt_id }}">{{ body }}</pre>';
+
     static $sampleReponseTpl = '
 {{ description }}
 <hr>
 <pre id="sample_response{{ elt_id }}">{{ response }}</pre>';
+
     static $sampleReponseHeaderTpl = '
 <pre id="sample_resp_header{{ elt_id }}">{{ response }}</pre>';
+
     static $paramTableTpl = '
 <table class="table table-hover">
     <thead>
@@ -113,6 +101,7 @@ class Builder
         {{ tbody }}
     </tbody>
 </table>';
+
     static $paramContentTpl = '
 <tr>
     <td><strong>{{ name }}</strong></td>
@@ -120,31 +109,12 @@ class Builder
     <td>{{ nullable }}</td>
     <td>{{ description }}</td>
 </tr>';
+
     static $paramSampleBtnTpl = '
 <a href="javascript:void(0);" data-toggle="popover" data-trigger="focus" data-placement="bottom" title="Sample" data-content="{{ sample }}">
     <i class="btn glyphicon glyphicon-exclamation-sign"></i>
 </a>';
-    static $sandboxFormTpl = '
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    {{ headers }}
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="{{ route }}" method="{{ method }}" name="form{{ elt_id }}" id="form{{ elt_id }}">
-    
-    Parameters
-    <hr/>
-    {{ params }}
-    <button type="submit" class="btn btn-success send" rel="{{ elt_id }}">Send</button>
-</form></div>';
-    static $sandboxFormInputTpl = '
-<div class="form-group">
-    <label class="control-label" for="{{ name }}">{{ name }}</label>
-    <input type="{{ type }}" class="form-control input-sm" id="{{ name }}" placeholder="{{ description }} - Ex: {{ sample }}" name="{{ name }}">
-</div>';
+
     /**
      * Classes collection
      *
@@ -286,7 +256,6 @@ class Builder
                     '{{ headers }}' => $this->generateHeadersTemplate($docs),
                     '{{ parameters }}' => $this->generateParamsTemplate($docs),
                     '{{ body }}' => $this->generateBodyTemplate($counter, $docs),
-                    '{{ sandbox_form }}' => $this->generateSandboxForm($docs, $counter),
                     '{{ sample_response_headers }}' => $sampleOutput[0],
                     '{{ sample_response_body }}' => $sampleOutput[1]
                 );
@@ -494,47 +463,6 @@ class Builder
             '{{ elt_id }}' => $id,
             '{{ body }}' => $body['sample']
         ));
-
-    }
-
-    /**
-     * Generate route parameters form
-     *
-     * @param  array $st_params
-     * @param  integer $counter
-     * @return mixed
-     */
-    protected function generateSandboxForm($st_params, $counter)
-    {
-        $headers = array();
-        $params = array();
-
-        if (isset($st_params['ApiParams']) && is_array($st_params['ApiParams'])) {
-            foreach ($st_params['ApiParams'] as $param) {
-                $params[] = strtr(static::$sandboxFormInputTpl, array(
-                    '{{ type }}' => $param['type'],
-                    '{{ name }}' => $param['name'],
-                    '{{ description }}' => $param['description'],
-                    '{{ sample }}' => $param['sample']
-                ));
-            }
-        }
-
-        if (isset($st_params['ApiHeaders']) && is_array($st_params['ApiHeaders'])) {
-            foreach ($st_params['ApiHeaders'] as $header) {
-                $headers[] = strtr(static::$sandboxFormInputTpl, array('{{ name }}' => $header['name']));
-            }
-        }
-
-        $tr = array(
-            '{{ elt_id }}' => $counter,
-            '{{ method }}' => $st_params['ApiMethod'][0]['type'],
-            '{{ route }}' => $st_params['ApiRoute'][0]['name'],
-            '{{ headers }}' => implode(PHP_EOL, $headers),
-            '{{ params }}' => implode(PHP_EOL, $params),
-        );
-
-        return strtr(static::$sandboxFormTpl, $tr);
     }
 
     /**
