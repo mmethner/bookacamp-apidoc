@@ -178,6 +178,10 @@ class Builder
      * Constructor
      *
      * @param array $st_classes
+     * @param $s_output_dir
+     * @param string $title
+     * @param string $s_output_file
+     * @param null $template_path
      */
     public function __construct(
         array $st_classes,
@@ -200,7 +204,7 @@ class Builder
     /**
      * Output the annotations in json format
      *
-     * @return json
+     * @return void
      */
     public function renderJson()
     {
@@ -237,6 +241,8 @@ class Builder
 
     /**
      * Build the docs
+     * @throws \Crada\Apidoc\Exception
+     * @return bool
      */
     public function generate()
     {
@@ -247,8 +253,9 @@ class Builder
      * Generate the content of the documentation
      *
      * @return boolean
+     * @throws \Crada\Apidoc\Exception
      */
-    protected function generateTemplate()
+    private function generateTemplate()
     {
         $st_annotations = $this->extractAnnotations();
 
@@ -276,8 +283,8 @@ class Builder
                     '{{ method }}' => $this->generateBadgeForMethod($docs),
                     '{{ route }}' => $docs['ApiRoute'][0]['name'],
                     '{{ description }}' => $docs['ApiDescription'][0]['description'],
-                    '{{ headers }}' => $this->generateHeadersTemplate($counter, $docs),
-                    '{{ parameters }}' => $this->generateParamsTemplate($counter, $docs),
+                    '{{ headers }}' => $this->generateHeadersTemplate($docs),
+                    '{{ parameters }}' => $this->generateParamsTemplate($docs),
                     '{{ body }}' => $this->generateBodyTemplate($counter, $docs),
                     '{{ sandbox_form }}' => $this->generateSandboxForm($docs, $counter),
                     '{{ sample_response_headers }}' => $sampleOutput[0],
@@ -305,9 +312,9 @@ class Builder
      *
      * @param  array $st_params
      * @param  integer $counter
-     * @return string
+     * @return array
      */
-    protected function generateSampleOutput($st_params, $counter)
+    private function generateSampleOutput($st_params, $counter)
     {
 
         if (!isset($st_params['ApiReturn'])) {
@@ -367,7 +374,7 @@ class Builder
      * @param  array $data
      * @return string
      */
-    protected function generateBadgeForMethod($data)
+    private function generateBadgeForMethod($data)
     {
         $method = strtoupper($data['ApiMethod'][0]['type']);
         $st_labels = array(
@@ -384,14 +391,13 @@ class Builder
 
     /**
      * Generates the template for headers
-     * @param  int $id
      * @param  array $st_params
-     * @return void|string
+     * @return string
      */
-    protected function generateHeadersTemplate($id, $st_params)
+    private function generateHeadersTemplate($st_params)
     {
         if (!isset($st_params['ApiHeaders'])) {
-            return;
+            return '';
         }
 
         $body = array();
@@ -412,14 +418,13 @@ class Builder
     /**
      * Generates the template for parameters
      *
-     * @param  int $id
      * @param  array $st_params
-     * @return void|string
+     * @return string
      */
-    protected function generateParamsTemplate($id, $st_params)
+    private function generateParamsTemplate($st_params)
     {
         if (!isset($st_params['ApiParams'])) {
-            return;
+            return '';
         }
 
         $body = array();
@@ -430,12 +435,6 @@ class Builder
                 '{{ nullable }}' => @$params['nullable'] == '1' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
-            //if (isset($params['sample'])) {
-            //    $tr['{{ type }}'] .= ' ' . strtr(
-            //            static::$paramSampleBtnTpl,
-            //            array('{{ sample }}' => $params['sample'])
-            //        );
-            //}
             $body[] = strtr(static::$paramContentTpl, $tr);
 
             if (isset($params['sample'])) {
@@ -480,13 +479,13 @@ class Builder
      * Generate POST body template
      *
      * @param  int $id
-     * @param  array $body
-     * @return void|string
+     * @param array $docs
+     * @return string
      */
     private function generateBodyTemplate($id, $docs)
     {
         if (!isset($docs['ApiBody'])) {
-            return;
+            return '';
         }
 
         $body = $docs['ApiBody'][0];
@@ -499,11 +498,11 @@ class Builder
     }
 
     /**
-     * Generate route paramteres form
+     * Generate route parameters form
      *
      * @param  array $st_params
      * @param  integer $counter
-     * @return void|mixed
+     * @return mixed
      */
     protected function generateSandboxForm($st_params, $counter)
     {
@@ -538,6 +537,11 @@ class Builder
         return strtr(static::$sandboxFormTpl, $tr);
     }
 
+    /**
+     * @param $data
+     * @param $file
+     * @throws \Crada\Apidoc\Exception
+     */
     protected function saveTemplate($data, $file)
     {
         $oldContent = file_get_contents($this->template_path);
