@@ -1,7 +1,9 @@
 bookacamp-apidoc
 ==========
 
-Generate documentation for php API based application. No dependency. No framework required.
+Generate documentation for www.bookacamp.de api.
+
+For general purpose php api documentation see https://github.com/calinrada/php-apidoc
 
 * [Requirements](#requirements)
 * [Installation](#installation)
