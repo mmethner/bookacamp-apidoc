@@ -7,10 +7,7 @@ Generate documentation for php API based application. No dependency. No framewor
 * [Installation](#installation)
 * [Usage](#usage)
 * [Available Methods](#methods)
-* [Preview](#preview)
-* [Tips](#tips)
-* [Known issues](#known-issues)
-* [TODO](#todo)
+* [Credits](#credits)
 
 ### <a id="requirements"></a>Requirements
 
@@ -23,9 +20,15 @@ The recommended installation is via composer. Just add the following line to you
 ```json
 {
     ...
+    "repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/mmethner/php-apidoc"
+    }
+    ],
     "require": {
         ...
-        "crada/php-apidoc": "@dev"
+        "mmethner/php-apidoc": "dev-bookacamp"
     }
 }
 ```
@@ -121,24 +124,9 @@ Here is the list of methods available so far :
 * @ApiReturn(type="...", sample="...")
 * @ApiBody(sample="...")
 
-### <a id="preview"></a>Preview
+### <a id="credits"></a>Credits
 
-You can see a dummy generated documentation on http://calinrada.github.io/php-apidoc/
-
-### <a id="tips"></a>Tips
-
-To generate complex object sample input, use the ApiParam "type=(object|array(object)|array)":
-
-```php
-* @ApiParams(name="data", type="object", sample="{'user_id':'int','profile':{'email':'string','age':'integer'}}")
-```
-
-### <a id="knownissues"></a>Known issues
-
-I don't know any, but please tell me if you find something. PS: I have tested it only in Chrome !
-
-### <a id="todo"></a>TODO
-
-* Implement options for JSONP
-* Implement "add fields" option
+Thanks to the work of Calin Rada.    
+This project is based on the work of https://github.com/calinrada/php-apidoc
+and customized to fit for www.bookacamp.de
 
