@@ -211,7 +211,7 @@ class Builder
 
     /**
      * Build the docs
-     * @throws \Crada\Apidoc\Exception
+     * @throws \Exception
      * @return bool
      */
     public function generate()
@@ -223,7 +223,7 @@ class Builder
      * Generate the content of the documentation
      *
      * @return boolean
-     * @throws \Crada\Apidoc\Exception
+     * @throws \Exception
      */
     private function generateTemplate()
     {
@@ -468,7 +468,7 @@ class Builder
     /**
      * @param $data
      * @param $file
-     * @throws \Crada\Apidoc\Exception
+     * @throws \Exception
      */
     protected function saveTemplate($data, $file)
     {
@@ -484,11 +484,11 @@ class Builder
 
         if (!is_dir($this->_output_dir)) {
             if (!mkdir($this->_output_dir)) {
-                throw new Exception('Cannot create directory');
+                throw new \Exception('Cannot create directory');
             }
         }
         if (!file_put_contents($this->_output_dir . '/' . $file, $newContent)) {
-            throw new Exception('Cannot save the content to ' . $this->_output_dir);
+            throw new \Exception('Cannot save the content to ' . $this->_output_dir);
         }
     }
 }

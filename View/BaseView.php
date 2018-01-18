@@ -5,8 +5,6 @@
 
 namespace Crada\Apidoc\View;
 
-use Crada\Apidoc\Exception;
-
 /**
  * @license http://opensource.org/licenses/bsd-license.php The BSD License
  * @author  Calin Rada <rada.calin@gmail.com>
@@ -125,7 +123,7 @@ class BaseView implements ViewInterface
     {
         $file = str_replace('\\', '/', $this->getTemplate()) . '.php';
         if (!file_exists($file)) {
-            throw new Exception('Template ' . $file . ' does not exist.');
+            throw new \Exception('Template ' . $file . ' does not exist.');
         }
         extract($this->st_data);
         ob_start();
