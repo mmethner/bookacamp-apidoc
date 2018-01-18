@@ -5,8 +5,6 @@
 
 namespace Crada\Apidoc;
 
-use Crada\Apidoc\View\JsonView;
-
 /**
  * @license http://opensource.org/licenses/bsd-license.php The BSD License
  * @author  Calin Rada <rada.calin@gmail.com>
@@ -169,20 +167,6 @@ class Builder
             $template_path = __DIR__ . '/Resources/views/template/index.html';
         }
         $this->template_path = $template_path;
-    }
-
-    /**
-     * Output the annotations in json format
-     *
-     * @return void
-     */
-    public function renderJson()
-    {
-        $st_annotations = $this->extractAnnotations();
-
-        $o_view = new JsonView();
-        $o_view->set('annotations', $st_annotations);
-        $o_view->render();
     }
 
     /**
