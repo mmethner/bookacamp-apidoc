@@ -1,13 +1,16 @@
 <?php
 /**
- * This file is part of the php-apidoc package.
+ * This material may not be reproduced, displayed, modified or distributed
+ * without the express prior written permission of the copyright holder.
+ *
+ * Copyright (c) Mathias Methner
  */
 
-namespace Crada\Apidoc;
+namespace Bookacamp\Apidoc;
 
 /**
- * @license http://opensource.org/licenses/bsd-license.php The BSD License
- * @author  Calin Rada <rada.calin@gmail.com>
+ * Class imported from https://github.com/calinrada/php-apidoc
+ * @author Calin Rada <rada.calin@gmail.com>
  */
 class Builder
 {
@@ -16,7 +19,7 @@ class Builder
      *
      * @var string
      */
-    const VERSION = '2.0.0';
+    const VERSION = '0.0.1';
 
     /**
      * @var string
@@ -31,7 +34,7 @@ class Builder
     <div id="collapseOne{{ elt_id }}" class="panel-collapse collapse">
         <div class="panel-body">
 
-            <ul class="nav nav-tabs" id="php-apidoctab{{ elt_id }}">
+            <ul class="nav nav-tabs" id="bookacamp-apidoctab{{ elt_id }}">
                 <li class="active"><a href="#info{{ elt_id }}" data-toggle="tab">Info</a></li>
                 <li><a href="#sample{{ elt_id }}" data-toggle="tab">Sample output</a></li>
             </ul>
@@ -148,29 +151,33 @@ class Builder
      *
      * @var array
      */
-    protected $_st_classes;
+    private $_st_classes = [];
+
     /**
      * Output directory for documentation
      *
      * @var string
      */
-    protected $_output_dir;
+    private $_output_dir = '';
+
     /**
      * Title to be displayed
      * @var string
      */
-    protected $_title;
+    private $_title = '';
+
     /**
      * Output filename for documentation
      *
      * @var string
      */
-    protected $_output_file;
+    private $_output_file = '';
+
     /**
      * Template file path
      * @var string
      **/
-    protected $template_path = null;
+    private $template_path = '';
 
     /**
      * Constructor
@@ -178,25 +185,25 @@ class Builder
      * @param array $st_classes
      * @param $s_output_dir
      * @param string $title
-     * @param string $s_output_file
-     * @param null $template_path
+     * @param string $outputFileName
+     * @param string $templatePath
      */
     public function __construct(
         array $st_classes,
-        $s_output_dir,
-        $title = 'php-apidoc',
-        $s_output_file = 'index.html',
-        $template_path = null
+        string $s_output_dir,
+        string $title = 'bookacamp-apidoc',
+        string $outputFileName = 'index.html',
+        string $templatePath = ''
     ) {
         $this->_st_classes = $st_classes;
         $this->_output_dir = $s_output_dir;
         $this->_title = $title;
-        $this->_output_file = $s_output_file;
+        $this->_output_file = $outputFileName;
 
-        if (!$template_path) {
-            $template_path = __DIR__ . '/Resources/views/template/index.html';
+        if (!$templatePath) {
+            $templatePath = __DIR__ . '/template/index.html';
         }
-        $this->template_path = $template_path;
+        $this->template_path = $templatePath;
     }
 
     /**
@@ -204,7 +211,7 @@ class Builder
      *
      * @return array
      */
-    protected function extractAnnotations()
+    protected function extractAnnotations(): array
     {
         foreach ($this->_st_classes as $class) {
             $st_output[] = Extractor::getAllClassAnnotations($class);
@@ -218,7 +225,7 @@ class Builder
      *
      * @return array
      */
-    public function renderArray()
+    public function renderArray(): array
     {
         return $this->extractAnnotations();
     }
@@ -228,7 +235,7 @@ class Builder
      * @throws \Exception
      * @return bool
      */
-    public function generate()
+    public function generate(): bool
     {
         return $this->generateTemplate();
     }
@@ -239,11 +246,11 @@ class Builder
      * @return boolean
      * @throws \Exception
      */
-    private function generateTemplate()
+    private function generateTemplate(): bool
     {
         $st_annotations = $this->extractAnnotations();
 
-        $template = array();
+        $template = [];
         $counter = 0;
         $section = null;
 
@@ -262,7 +269,7 @@ class Builder
 
                 $sampleOutput = $this->generateSampleOutput($docs, $counter);
 
-                $tr = array(
+                $tr = [
                     '{{ elt_id }}' => $counter,
                     '{{ method }}' => $this->generateBadgeForMethod($docs),
                     '{{ route }}' => $docs['ApiRoute'][0]['name'],
@@ -272,7 +279,7 @@ class Builder
                     '{{ body }}' => $this->generateBodyTemplate($counter, $docs),
                     '{{ sample_response_headers }}' => $sampleOutput[0],
                     '{{ sample_response_body }}' => $sampleOutput[1]
-                );
+                ];
                 $template[$section][] = strtr(static::$mainTpl, $tr);
                 $counter++;
             }
@@ -297,15 +304,15 @@ class Builder
      * @param  integer $counter
      * @return array
      */
-    private function generateSampleOutput($st_params, $counter)
+    private function generateSampleOutput(array $st_params, int $counter): array
     {
 
         if (!isset($st_params['ApiReturn'])) {
             $responseBody = '';
         } else {
-            $ret = array();
+            $ret = [];
             foreach ($st_params['ApiReturn'] as $params) {
-                if (in_array($params['type'], array(
+                if (in_array($params['type'], [
                         'object',
                         'array(object) ',
                         'array',
@@ -313,12 +320,12 @@ class Builder
                         'boolean',
                         'integer',
                         'number'
-                    )) && isset($params['sample'])) {
-                    $tr = array(
+                    ]) && isset($params['sample'])) {
+                    $tr = [
                         '{{ elt_id }}' => $counter,
                         '{{ response }}' => $params['sample'],
                         '{{ description }}' => '',
-                    );
+                    ];
                     if (isset($params['description'])) {
                         $tr['{{ description }}'] = $params['description'];
                     }
@@ -332,14 +339,14 @@ class Builder
         if (!isset($st_params['ApiReturnHeaders'])) {
             $responseHeaders = '';
         } else {
-            $ret = array();
+            $ret = [];
             foreach ($st_params['ApiReturnHeaders'] as $headers) {
                 if (isset($headers['sample'])) {
-                    $tr = array(
+                    $tr = [
                         '{{ elt_id }}' => $counter,
                         '{{ response }}' => $headers['sample'],
                         '{{ description }}' => ''
-                    );
+                    ];
 
                     $ret[] = strtr(static::$sampleReponseHeaderTpl, $tr);
                 }
@@ -348,7 +355,7 @@ class Builder
             $responseHeaders = implode(PHP_EOL, $ret);
         }
 
-        return array($responseHeaders, $responseBody);
+        return [$responseHeaders, $responseBody];
     }
 
     /**
@@ -357,17 +364,17 @@ class Builder
      * @param  array $data
      * @return string
      */
-    private function generateBadgeForMethod($data)
+    private function generateBadgeForMethod(array $data): string
     {
         $method = strtoupper($data['ApiMethod'][0]['type']);
-        $st_labels = array(
+        $st_labels = [
             'POST' => 'label-primary',
             'GET' => 'label-success',
             'PUT' => 'label-warning',
             'DELETE' => 'label-danger',
             'PATCH' => 'label-default',
             'OPTIONS' => 'label-info'
-        );
+        ];
 
         return '<span class="label ' . $st_labels[$method] . '">' . $method . '</span>';
     }
@@ -377,24 +384,25 @@ class Builder
      * @param  array $st_params
      * @return string
      */
-    private function generateHeadersTemplate($st_params)
+    private function generateHeadersTemplate(array $st_params): string
     {
         if (!isset($st_params['ApiHeaders'])) {
             return '';
         }
 
-        $body = array();
+        $body = [];
         foreach ($st_params['ApiHeaders'] as $params) {
-            $tr = array(
+            $tr = [
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
                 '{{ required }}' => @$params['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
-            );
+            ];
             $body[] = strtr(static::$paramContentTpl, $tr);
         }
 
-        return strtr(static::$paramTableTpl, array('{{ tbody }}' => implode(PHP_EOL, $body)));
+        return strtr(static::$paramTableTpl, [
+            '{{ tbody }}' => implode(PHP_EOL, $body)]);
 
     }
 
@@ -404,20 +412,20 @@ class Builder
      * @param  array $st_params
      * @return string
      */
-    private function generateParamsTemplate($st_params)
+    private function generateParamsTemplate(array $st_params): string
     {
         if (!isset($st_params['ApiParams'])) {
             return '';
         }
 
-        $body = array();
+        $body = [];
         foreach ($st_params['ApiParams'] as $params) {
-            $tr = array(
+            $tr = [
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
                 '{{ required }}' => @$params['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
-            );
+            ];
             $body[] = strtr(static::$paramContentTpl, $tr);
 
             if (isset($params['sample'])) {
@@ -425,7 +433,9 @@ class Builder
             }
         }
 
-        return strtr(static::$paramTableTpl, array('{{ tbody }}' => implode(PHP_EOL, $body)));
+        return strtr(static::$paramTableTpl, [
+            '{{ tbody }}' => implode(PHP_EOL, $body)
+        ]);
     }
 
     /**
@@ -433,39 +443,39 @@ class Builder
      * @param string $sample
      * @return void
      */
-    private function appendParamsTemplateDescription(&$body, $sample = '')
+    private function appendParamsTemplateDescription(array &$body, string $sample = ''): void
     {
         $sample = str_replace("'", "\"", $sample);
 
         $jsonObject = json_decode($sample, true);
         if (is_null($jsonObject)) {
-            $body[] = strtr(static::$paramSubContentTpl, array(
+            $body[] = strtr(static::$paramSubContentTpl, [
                 '{{ name }}' => '',
                 '{{ type }}' => '',
                 '{{ required }}' => '',
                 '{{ description }}' => $sample,
-            ));
+            ]);
             return;
         }
 
         foreach ($jsonObject as $row) {
-            $body[] = strtr(static::$paramSubContentTpl, array(
+            $body[] = strtr(static::$paramSubContentTpl, [
                 '{{ name }}' => @$row['name'],
                 '{{ type }}' => @$row['type'],
                 '{{ required }}' => @$row['required'] == '0' ? 'No' : 'Yes',
                 '{{ description }}' => @$row['description'],
-            ));
+            ]);
         }
     }
 
     /**
      * Generate POST body template
      *
-     * @param  int $id
+     * @param int $id
      * @param array $docs
      * @return string
      */
-    private function generateBodyTemplate($id, $docs)
+    private function generateBodyTemplate(int $id, array $docs): string
     {
         if (!isset($docs['ApiBody'])) {
             return '';
@@ -473,27 +483,28 @@ class Builder
 
         $body = $docs['ApiBody'][0];
 
-        return strtr(static::$samplePostBodyTpl, array(
+        return strtr(static::$samplePostBodyTpl, [
             '{{ elt_id }}' => $id,
             '{{ body }}' => $body['sample']
-        ));
+        ]);
     }
 
     /**
      * @param $data
      * @param $file
      * @throws \Exception
+     * @return void
      */
-    protected function saveTemplate($data, $file)
+    protected function saveTemplate(string $data, string $file): void
     {
         $oldContent = file_get_contents($this->template_path);
 
-        $tr = array(
+        $tr = [
             '{{ content }}' => $data,
             '{{ title }}' => $this->_title,
             '{{ date }}' => date('Y-m-d, H:i:s'),
             '{{ version }}' => static::VERSION,
-        );
+        ];
         $newContent = strtr($oldContent, $tr);
 
         if (!is_dir($this->_output_dir)) {

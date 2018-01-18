@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="bookacamp-apidoc - api documentation generator">
-    <meta name="author" content="Calin Rada">
+    <meta name="author" content="Mathias Methner">
     <title>{{ title }}</title>
     <link href="https://www.bookacamp.de/common/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
@@ -19,7 +19,7 @@
         }
 
         .mt0 {
-            margin-top: 0px;
+            margin-top: 0;
         }
 
         .footer {
@@ -147,7 +147,7 @@
 
     $(document).ready(function () {
 
-        $('#php-apidoctab a').click(function (e) {
+        $('#bookacamp-apidoctab a').click(function (e) {
             e.preventDefault()
             $(this).tab('show')
         });

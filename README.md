@@ -1,4 +1,4 @@
-php-apidoc
+bookacamp-apidoc
 ==========
 
 Generate documentation for php API based application. No dependency. No framework required.
@@ -11,7 +11,7 @@ Generate documentation for php API based application. No dependency. No framewor
 
 ### <a id="requirements"></a>Requirements
 
-PHP >= 5.3.2
+PHP >= 7.1.13
 
 ### <a id="installation"></a>Installation
 
@@ -23,12 +23,12 @@ The recommended installation is via composer. Just add the following line to you
     "repositories": [
     {
         "type": "vcs",
-        "url": "https://github.com/mmethner/php-apidoc"
+        "url": "https://github.com/mmethner/bookacamp-apidoc"
     }
     ],
     "require": {
         ...
-        "mmethner/php-apidoc": "dev-bookacamp"
+        "mmethner/bookacamp-apidoc": "dev-bookacamp"
     }
 }
 ```
@@ -85,21 +85,20 @@ Create an apidoc.php file in your project root folder as follow:
 # apidoc.php
 <?php
 
-use Crada\Apidoc\Builder;
-use Crada\Apidoc\Exception;
+use Bookacamp\Apidoc\Builder;
 
 $classes = array(
     'Some\Namespace\User',
     'Some\Namespace\OtherClass',
 );
 
-$output_dir  = __DIR__.'/apidocs';
-$output_file = 'api.html'; // defaults to index.html
+$outputDir  = __DIR__.'/apidocs';
+$outputFile = 'api.html'; // defaults to index.html
 
 try {
-    $builder = new Builder($classes, $output_dir, 'Api Title', $output_file);
+    $builder = new Builder($classes, $outputDir, 'Api Title', $outputFile);
     $builder->generate();
-} catch (Exception $e) {
+} catch (\Exception $e) {
     echo 'There was an error generating the documentation: ', $e->getMessage();
 }
 

@@ -1,15 +1,18 @@
 <?php
 /**
- * This file is part of the php-apidoc package.
+ * This material may not be reproduced, displayed, modified or distributed
+ * without the express prior written permission of the copyright holder.
+ *
+ * Copyright (c) Mathias Methner
  */
 
-namespace Crada\Apidoc;
+namespace Bookacamp\Apidoc;
 
 /**
  * Class imported from https://github.com/eriknyk/Annotations
  * @author  Erik Amaru Ortiz https://github.com/eriknyk‎
  *
- * @license http://opensource.org/licenses/bsd-license.php The BSD License
+ * Class imported from https://github.com/calinrada/php-apidoc
  * @author  Calin Rada <rada.calin@gmail.com>
  */
 class Extractor
@@ -19,11 +22,13 @@ class Extractor
      * @var array
      */
     private static $annotationCache;
+
     /**
      * Stores the default namespace for Objects instance, usually used on methods like getMethodAnnotationsObjects()
      * @var string
      */
     public $defaultNamespace = '';
+
     /**
      * Indicates that annotations should has strict behavior, 'false' by default
      * @var boolean
@@ -35,8 +40,9 @@ class Extractor
      *
      * @param  string $className class name to get annotations
      * @return array  self::$annotationCache all annotated elements
+     * @throws \Exception
      */
-    public static function getClassAnnotations($className)
+    public static function getClassAnnotations(string $className)
     {
         if (!isset(self::$annotationCache[$className])) {
             $class = new \ReflectionClass($className);
@@ -51,13 +57,15 @@ class Extractor
      *
      * @param  string $docblock
      * @return array  parsed annotations params
+     * @throws \Exception
      */
-    private static function parseAnnotations($docblock)
+    private static function parseAnnotations(string $docblock)
     {
-        $annotations = array();
+        $annotations = [];
 
         // Strip away the docblock header and footer to ease parsing of one line annotations
         $docblock = substr($docblock, 3, -2);
+        $name = '';
 
         if (preg_match_all('/@(?<name>[A-Za-z_-]+)[\s\t]*\((?<args>(?:(?!\)).)*)\)\r?/s', $docblock, $matches)) {
             $numMatches = count($matches[0]);
@@ -69,7 +77,7 @@ class Extractor
                     $name = $matches['name'][$i];
                     $value = self::parseArgs($argsParts);
                 } else {
-                    $value = array();
+                    $value = [];
                 }
 
                 $annotations[$name][] = $value;
@@ -86,12 +94,12 @@ class Extractor
      * @return array  annotated arguments
      * @throws \Exception
      */
-    private static function parseArgs($content)
+    private static function parseArgs(string $content)
     {
         // Replace initial stars
         $content = preg_replace('/^\s*\*/m', '', $content);
 
-        $data = array();
+        $data = [];
         $len = strlen($content);
         $i = 0;
         $var = '';
@@ -100,12 +108,11 @@ class Extractor
 
         $prevDelimiter = '';
         $nextDelimiter = '';
-        $nextToken = '';
         $composing = false;
         $type = 'plain';
         $delimiter = null;
         $quoted = false;
-        $tokens = array('"', '"', '{', '}', ',', '=');
+        $tokens = ['"', '"', '{', '}', ',', '='];
 
         while ($i <= $len) {
             $prev_c = substr($content, $i - 1, 1);
@@ -228,7 +235,7 @@ class Extractor
      * @param  boolean $trim indicate if the value passed should be trimmed after to try cast
      * @return mixed   returns the value converted to original type if was possible
      */
-    private static function castValue($val, $trim = false)
+    private static function castValue($val, bool $trim = false)
     {
         if (is_array($val)) {
             foreach ($val as $key => $value) {
@@ -253,7 +260,12 @@ class Extractor
         return $val;
     }
 
-    public static function getAllClassAnnotations($className)
+    /**
+     * @param string $className
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function getAllClassAnnotations(string $className)
     {
         $class = new \ReflectionClass($className);
 
@@ -271,8 +283,9 @@ class Extractor
      * @param  string $className class name
      * @param  string $methodName method name to get annotations
      * @return array  self::$annotationCache all annotated elements of a method given
+     * @throws \Exception
      */
-    public static function getMethodAnnotations($className, $methodName)
+    public static function getMethodAnnotations(string $className, string $methodName)
     {
         if (!isset(self::$annotationCache[$className . '::' . $methodName])) {
             try {
@@ -280,7 +293,7 @@ class Extractor
                 $class = new \ReflectionClass($className);
                 $annotations = self::consolidateAnnotations($method->getDocComment(), $class->getDocComment());
             } catch (\ReflectionException $e) {
-                $annotations = array();
+                $annotations = [];
             }
 
             self::$annotationCache[$className . '::' . $methodName] = $annotations;
@@ -289,13 +302,19 @@ class Extractor
         return self::$annotationCache[$className . '::' . $methodName];
     }
 
-    private static function consolidateAnnotations($docblockMethod, $dockblockClass)
+    /**
+     * @param string $docblockMethod
+     * @param string $dockblockClass
+     * @return array
+     * @throws \Exception
+     */
+    private static function consolidateAnnotations(string $docblockMethod, string $dockblockClass)
     {
         $methodAnnotations = self::parseAnnotations($docblockMethod);
         $classAnnotations = self::parseAnnotations($dockblockClass);
 
         if (count($methodAnnotations) === 0) {
-            return array();
+            return [];
         }
 
         foreach ($classAnnotations as $name => $valueClass) {
@@ -358,7 +377,7 @@ class Extractor
     public function getMethodAnnotationsObjects($className, $methodName)
     {
         $annotations = $this->getMethodAnnotations($className, $methodName);
-        $objects = array();
+        $objects = [];
 
         $i = 0;
 
