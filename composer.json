@@ -1,5 +1,5 @@
 {
-  "name": "crada/php-apidoc",
+  "name": "mmethner/php-apidoc",
   "type": "library",
   "description": "Generate documentation for php API based application. No dependency. No framework required.",
   "keywords": [
@@ -8,9 +8,13 @@
     "documentation",
     "generator"
   ],
-  "homepage": "https://github.com/calinrada/php-apidoc",
+  "homepage": "https://github.com/mmethner/php-apidoc",
   "license": "MIT",
   "authors": [
+    {
+      "name": "Mathias Methner",
+      "email": "mathiasmethner@gmail.com"
+    },
     {
       "name": "Calin Rada",
       "email": "rada.calin@gmail.com"
