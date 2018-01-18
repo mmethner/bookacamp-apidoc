@@ -20,10 +20,10 @@ class User
      * @ApiDescription(section="User", description="Create's a new user")
      * @ApiMethod(type="post", route="/user/create")
      * @ApiRoute(name="/user/create")
-     * @ApiParams(name="username", type="string", nullable=false, description="Username")
-     * @ApiParams(name="email", type="string", nullable=false, description="Email")
-     * @ApiParams(name="password", type="string", nullable=false, description="Password")
-     * @ApiParams(name="age", type="integer", nullable=true, description="Age")
+     * @ApiParams(name="username", type="string", required=false, description="Username")
+     * @ApiParams(name="email", type="string", required=false, description="Email")
+     * @ApiParams(name="password", type="string", required=false, description="Password")
+     * @ApiParams(name="age", type="integer", required=true, description="Age")
      */
     public function create()
     {
@@ -34,7 +34,7 @@ class User
      * @ApiDescription(section="User", description="Delete a user")
      * @ApiMethod(type="delete")
      * @ApiRoute(name="/user/delete")
-     * @ApiParams(name="id", type="integer", nullable=false, description="User id")
+     * @ApiParams(name="id", type="integer", required=false, description="User id")
      */
     public function delete()
     {
@@ -45,7 +45,7 @@ class User
      * @ApiDescription(section="User", description="Delete a user")
      * @ApiMethod(type="put")
      * @ApiRoute(name="/user/update")
-     * @ApiParams(name="id", type="integer", nullable=false, description="User id")
+     * @ApiParams(name="id", type="integer", required=false, description="User id")
      */
     public function update()
     {

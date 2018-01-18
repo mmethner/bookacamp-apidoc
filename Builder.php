@@ -104,7 +104,7 @@ class Builder
 <tr>
     <td><strong>{{ name }}</strong></td>
     <td>{{ type }}</td>
-    <td>{{ nullable }}</td>
+    <td>{{ required }}</td>
     <td>{{ description }}</td>
 </tr>';
 
@@ -358,7 +358,7 @@ class Builder
             $tr = array(
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
-                '{{ nullable }}' => @$params['nullable'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$params['required'] == '1' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
             $body[] = strtr(static::$paramContentTpl, $tr);
@@ -385,7 +385,7 @@ class Builder
             $tr = array(
                 '{{ name }}' => $params['name'],
                 '{{ type }}' => $params['type'],
-                '{{ nullable }}' => @$params['nullable'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$params['required'] == '1' ? 'No' : 'Yes',
                 '{{ description }}' => @$params['description'],
             );
             $body[] = strtr(static::$paramContentTpl, $tr);
@@ -412,7 +412,7 @@ class Builder
             $body[] = strtr(static::$paramContentTpl, array(
                 '{{ name }}' => '',
                 '{{ type }}' => '',
-                '{{ nullable }}' => '',
+                '{{ required }}' => '',
                 '{{ description }}' => $sample,
             ));
             return;
@@ -422,7 +422,7 @@ class Builder
             $body[] = strtr(static::$paramContentTpl, array(
                 '{{ name }}' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.@$row['name'],
                 '{{ type }}' => @$row['type'],
-                '{{ nullable }}' => @$row['nullable'] == '1' ? 'No' : 'Yes',
+                '{{ required }}' => @$row['required'] == '1' ? 'No' : 'Yes',
                 '{{ description }}' => @$row['description'],
             ));
         }
