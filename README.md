@@ -13,7 +13,7 @@ For general purpose php api documentation see https://github.com/calinrada/php-a
 
 ### <a id="requirements"></a>Requirements
 
-PHP >= 7.1.13
+PHP >= 7.1
 
 ### <a id="installation"></a>Installation
 
