@@ -18,7 +18,7 @@ class Builder
      *
      * @var string
      */
-    const VERSION = '1.3.4';
+    const VERSION = '2.0.0';
 
     public static $mainTpl = '
 <div class="panel panel-default">
